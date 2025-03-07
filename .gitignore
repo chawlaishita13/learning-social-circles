@@ -1,0 +1,4 @@
+/data/egonets/** 
+/data/Training/**
+.venv
+__pycache__
