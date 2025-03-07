@@ -13,7 +13,6 @@ data_loader = LogisticRegressionDataLoader(data_dir=data_dir)
 
 all_X, all_y = data_loader.load_data(labels)
 
-
 X_train, X_test, y_train, y_test = train_test_split(all_X, all_y, test_size=0.3, random_state=74)
 clf = LogisticRegression(max_iter=1000)
 clf.fit(X_train, y_train)

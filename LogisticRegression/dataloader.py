@@ -2,6 +2,7 @@ import os
 import networkx as nx
 from utils import readcirclefile, readfeatures, readfeaturelist
 import numpy as np
+from tqdm import tqdm
 
 class LogisticRegressionDataLoader:
     def __init__(self, data_dir: os.path):
@@ -23,7 +24,7 @@ class LogisticRegressionDataLoader:
             for spec in requested_features:
                 inisde_dict[spec] = profile.get(spec, set({-1})).pop()
             specific_profile[id] = inisde_dict
-            
+
         graph = nx.Graph()
         trainingfiles = os.listdir(self.data_dir / 'Training')
 
@@ -34,34 +35,39 @@ class LogisticRegressionDataLoader:
                 values = true_circles[key]
                 for value in values:
                     edges.append((key, value))
+
+        print(len(edges))
         graph.add_edges_from(edges)
         edges = list(graph.edges())
         non_edges = list(nx.non_edges(graph))
 
         user_combined_features = []
-        self.data = []
+        data = []
 
-        for user_id in graph.nodes():
-            combined_features = specific_profile[user_id]
+        for user_id in tqdm(graph.nodes(), "Looping through graph nodes"):
+            combined_features = list(specific_profile[user_id].values())
             user_combined_features.append(combined_features)
 
-        for edge in edges:
+        print(len(user_combined_features))
+        print(user_combined_features[0])
+        for edge in tqdm(edges, "Looping through edges"):
             user1, user2 = edge
             label = 1  # They are friends
             try:
                 features = np.concatenate([user_combined_features[user1], user_combined_features[user2]])
-                self.data.append((features, label))
+                data.append((features, label))
             except Exception as e:
                 pass
 
-        for non_edge in non_edges:
+        for non_edge in tqdm(non_edges, "Looping through non-edges"):
             user1, user2 = non_edge
             label = 0  # They are not friends :( sad
             try:
                 features = np.concatenate([user_combined_features[user1], user_combined_features[user2]])
-                self.data.append((features, label))
+                data.append((features, label))
             except Exception as e:
                 pass
-        X = np.array([data[0] for data in self.data])
-        y = np.array([data[1] for data in self.data])
+        print(len(data))
+        X = np.array([data_i[0] for data_i in data])
+        y = np.array([data_i[1] for data_i in data])
         return X, y
