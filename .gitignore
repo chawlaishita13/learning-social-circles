@@ -2,4 +2,4 @@
 /data/Training/**
 .venv
 **/__pycache__
-.DS_STORE
+**/.DS_STORE
