@@ -22,7 +22,7 @@ def convert_profile_dict_to_vector(profile,features):
     out = []
     for feature in features:
         if feature in profile:
-            out.append(profile[feature])
+            out.append(set(profile[feature]))
         else:
             out.append(set())
     return out
