@@ -3,7 +3,7 @@ Hello, and welcome to our repository!
 
 ## File Structure
 
-Root Directory
+```Root Directory
 ├── Folder 1
 │   ├── File 1.txt
 │   └── File 2.txt
@@ -12,4 +12,4 @@ Root Directory
 │   └── Subfolder 1
 │       ├── File 4.txt
 │       └── File 5.txt
-
+```
