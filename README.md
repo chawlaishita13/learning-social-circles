@@ -45,5 +45,5 @@ If you would like the seer the visualizations created for our presentation, plea
 * Networkx
 * Tqdm
 * Xgboost
-* Matplotlib
+* Matplotlib \
 The complete list can be found in ```requirements.txt```.
