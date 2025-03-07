@@ -18,6 +18,27 @@ def read_nodeadjlist(filename):
       G.add_edge(int(e1),int(e))
   return G
 
+def convert_profile_dict_to_vector(profile,features):
+    out = []
+    for feature in features:
+        if feature in profile:
+            out.append(profile[feature])
+        else:
+            out.append(set())
+    return out
+
+def match_vector(profile1,profile2):
+    return [len(x.intersection(y)) for x,y in zip(profile1,profile2)]
+     
+
+def generate_feature_matrix(profiles_dict,ego,G):
+    return [match_vector(profiles_dict[ego], profiles_dict[g]) for g in G.nodes()]
+     
+
+def generate_class_matrix(G,true_circles):
+    return dict(zip(true_circles.keys(),[[int(g in circle) for g in G.nodes()] for circle in true_circles.values()]))
+
+
 def readfeaturelist(filename):
     """
     reads a featurelist file and returns a list of the feature names
@@ -150,3 +171,4 @@ def cost_function(pred_circles,true_circles):
     index = munk.compute(diff_matrix)  # compute the indices for the optimal alignment
     min_diff = sum( [ diff_matrix[row][col] for row,col in index] )  # compute the total error on the optimal alignment
     return min_diff
+
