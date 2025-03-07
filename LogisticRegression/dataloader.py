@@ -10,7 +10,7 @@ class LogisticRegressionDataLoader:
         self.data = None
         self.all_features = readfeaturelist(data_dir / 'featureList.txt')
 
-    def load_data(self, requested_features: list):
+    def load_data(self, requested_features: list, balanced=False):
         assert(type(requested_features) is list)
         for requested_feature in requested_features:
             if requested_feature not in self.all_features:
@@ -36,7 +36,6 @@ class LogisticRegressionDataLoader:
                 for value in values:
                     edges.append((key, value))
 
-        print(len(edges))
         graph.add_edges_from(edges)
         edges = list(graph.edges())
         non_edges = list(nx.non_edges(graph))
@@ -48,8 +47,7 @@ class LogisticRegressionDataLoader:
             combined_features = list(specific_profile[user_id].values())
             user_combined_features.append(combined_features)
 
-        print(len(user_combined_features))
-        print(user_combined_features[0])
+   
         for edge in tqdm(edges, "Looping through edges"):
             user1, user2 = edge
             label = 1  # They are friends
@@ -58,16 +56,20 @@ class LogisticRegressionDataLoader:
                 data.append((features, label))
             except Exception as e:
                 pass
-
+        
+        count = 0
         for non_edge in tqdm(non_edges, "Looping through non-edges"):
             user1, user2 = non_edge
             label = 0  # They are not friends :( sad
+            if balanced and count > len(edges):
+                break
             try:
                 features = np.concatenate([user_combined_features[user1], user_combined_features[user2]])
                 data.append((features, label))
+                count += 1
             except Exception as e:
                 pass
-        print(len(data))
+
         X = np.array([data_i[0] for data_i in data])
         y = np.array([data_i[1] for data_i in data])
         return X, y
